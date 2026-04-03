@@ -12,6 +12,29 @@ This plugin puts your [Loa](https://github.com/0xHoneyJar/loa) construct network
 
 Loa runs inside the repo. This takes the constructs outside of it.
 
+```mermaid
+flowchart TB
+    subgraph repo ["Inside the Repo — Loa + Claude Code"]
+        CC["/plan → /build → /review → /ship"]
+        GR["Grimoires & Workflow Gates"]
+        CC --- GR
+    end
+
+    subgraph hermes ["Outside the Repo — Hermes"]
+        direction LR
+        TG["📱 Telegram"]
+        DC["💬 Discord"]
+        CR["⏰ Cron"]
+        MEM["🧠 Memory"]
+        WEB["🌐 Web Research"]
+        DEL["⚡ Parallel Agents"]
+    end
+
+    PACKS["~/.loa/constructs/packs"] -->|constructs| PLUGIN
+    PLUGIN["hermes-loa-plugin"] -->|personas + skills| repo
+    PLUGIN -->|personas + skills| hermes
+```
+
 ## Install
 
 ```bash
@@ -36,6 +59,15 @@ That's it. No config required. Start a Hermes session and talk to your construct
 > load artisan
 ```
 
+```mermaid
+flowchart LR
+    A["'load artisan'"] --> B["Resolve Pack"]
+    B --> C["Read Identity"]
+    C --> D["Build Persona\n≤1500 chars"]
+    D --> E["Inject into\nSystem Prompt"]
+    E --> F["ALEXANDER shapes\nevery response"]
+```
+
 The plugin finds artisan in your packs, reads its identity, and injects the persona into context:
 
 ```
@@ -50,7 +82,7 @@ The difference between 'this feels right' and 'this feels off' is
 usually 2px, 40ms, or one wrong easing curve.
 ```
 
-That context is injected into the system prompt for the duration of the session. ALEXANDER's voice, frame, and expertise shape every response until you switch.
+That context shapes every response for the session until you switch.
 
 ```
 > load kansei
@@ -105,9 +137,63 @@ If your mode defines `vocab`, the plugin detects domain language implicitly (2+ 
 
 No config file? No modes. Direct activation always works regardless.
 
+### How activation resolves
+
+When you send a message, the plugin decides what to activate:
+
+```mermaid
+flowchart TD
+    MSG["User message"] --> EX{"Explicit mode?\n'FEEL mode'"}
+    EX -->|Yes| MODE["Activate mode constructs"]
+    EX -->|No| DIR{"Direct reference?\n'load kansei'"}
+    DIR -->|Yes| PACK["Activate named pack"]
+    DIR -->|No| IMP{"2+ vocab matches?"}
+    IMP -->|Yes| VOCAB["Activate best-match mode"]
+    IMP -->|No| NONE["No activation\nprevious state persists"]
+```
+
+Explicit always wins. Direct reference is second. Implicit vocab is the power-user layer.
+
 ## What You Get
 
-When this plugin indexes your packs, every skill in every construct becomes available to Hermes. That's the full surface:
+When this plugin indexes your packs, every skill in every construct becomes available to Hermes. **259 skills across 28 packs:**
+
+```mermaid
+mindmap
+  root((Construct Network))
+    Design
+      artisan
+      kansei
+      rosenzu
+      the-easel
+      vfx-playbook
+      webgl-particles
+    Build
+      the-arcade
+      protocol
+      noether
+      hardening
+    Research
+      k-hole
+      observer
+      gecko
+      crucible
+    Communicate
+      herald
+      gtm-collective
+      showcase
+      social-oracle
+    Create
+      the-mint
+      the-speakers
+      webreel
+      growthpages
+```
+
+All dynamically discovered from whatever you have installed. Install a new pack, start a new session, it's indexed.
+
+<details>
+<summary>Full pack reference table</summary>
 
 | Pack | Domain | Skills |
 |------|--------|--------|
@@ -126,9 +212,19 @@ When this plugin indexes your packs, every skill in every construct becomes avai
 | **gecko** | Ecosystem health | observe, patrol, diagnose, report |
 | **rosenzu** | Spatial awareness | mapping-topology, designing-thresholds, naming-rooms, ... |
 | **webgl-particles** | WebGL/3D | particle-orchestrator, procedural-shaders, gpu-architecture, ... |
-| ... | | |
+| **beacon** | Content/SEO | generating-markdown, optimizing-chunks, auditing-content, ... |
+| **the-easel** | Visual exploration | exploring-visuals, grounding-creative, recording-taste |
+| **the-mint** | Token/NFT systems | mint, materialize, character, environment, animate, ... |
+| **the-speakers** | Audio/sonic | making-beats, scoring-experience, suno-prompt, capturing-audio, ... |
+| **crucible** | QA/testing | validating-journeys, walking-through, diagramming-states |
+| **growthpages** | Landing pages | generate, research, edit, configure-project |
+| **vfx-playbook** | Visual effects | apply, review, playbook, research |
+| **webreel** | Video capture | capture, encoder, preview, configure |
+| **dynamic-auth** | Wallet/identity | resolving-wallet-identity, enforcing-primary-wallet |
+| **mibera-codex** | Lore/worldbuilding | browse-codex, query-entity, cross-reference |
+| **vocabulary-bank** | Design vocabulary | synthesizing-vocabulary, auditing-vocabulary |
 
-**259 skills across 28 packs.** All dynamically discovered from whatever you have installed. Install a new pack, start a new session, it's indexed.
+</details>
 
 ## What Hermes Adds to Constructs
 
@@ -147,32 +243,27 @@ Loa gives your constructs depth inside the repo — golden paths, workflow gates
 
 Based on [RFC #452: First-Class Construct Support in Loa](https://github.com/0xHoneyJar/loa/issues/452).
 
-```
-  Hermes Agent Runtime
-  ┌──────────────────────────────────────────────┐
-  │                                              │
-  │   System Prompt  ◄──  Loa Plugin             │
-  │   + persona           L1: Construct Index    │
-  │   + composition       L2: Name Resolution    │
-  │   + session path      L3: Composition        │
-  │                       L4: User Modes         │
-  │                       L5: Session Greeting   │
-  │                            │                 │
-  └────────────────────────────┼─────────────────┘
-                               │ reads
-                               ▼
-                ~/.loa/constructs/packs/
-                ├── artisan/
-                │   ├── construct.yaml
-                │   ├── identity/
-                │   │   ├── persona.yaml
-                │   │   ├── expertise.yaml
-                │   │   └── ALEXANDER.md
-                │   └── skills/
-                │       └── styling-material/SKILL.md
-                ├── k-hole/
-                ├── observer/
-                └── ...
+```mermaid
+flowchart TB
+    subgraph Hermes ["Hermes Agent Runtime"]
+        SP["System Prompt\n+ persona\n+ composition\n+ session path"]
+        LP["Loa Plugin"]
+        LP -->|inject context| SP
+    end
+
+    subgraph layers ["Plugin Layers (RFC #452)"]
+        direction LR
+        L1["L1\nConstruct Index"]
+        L2["L2\nName Resolution"]
+        L3["L3\nComposition"]
+        L4["L4\nUser Modes"]
+        L5["L5\nSession Greeting"]
+        L1 --> L2 --> L3 --> L4 --> L5
+    end
+
+    PACKS["~/.loa/constructs/packs/"] -->|scan| L1
+    CONFIG["~/.loa/loa-plugin.yaml"] -->|load| L4
+    layers --> LP
 ```
 
 | Layer | From RFC #452 | Plugin Implementation |
@@ -183,25 +274,43 @@ Based on [RFC #452: First-Class Construct Support in Loa](https://github.com/0xH
 | **L4** | Personal Operator OS | User-defined modes from `loa-plugin.yaml` — your modes, your rules |
 | **L5** | Ambient Presence | Session greeting: pack count, available modes, active constructs |
 
-### What the plugin reads
+### How persona injection works
 
-- `construct.yaml` — pack metadata, composition graph, domain tags
-- `identity/persona.yaml` — cognitive frame, voice, markers
-- `identity/expertise.yaml` — domain names + depth levels
-- `identity/*.md` — persona narrative (first 4 lines)
+The plugin reads up to three identity files per pack and assembles a compact summary:
 
-That's it. No source code, no grimoires, no application state.
+```mermaid
+flowchart LR
+    PY["persona.yaml\ncognitive frame\nvoice, markers"] --> ASM
+    EY["expertise.yaml\ndomain names\n+ depth levels"] --> ASM
+    MD["*.md\nfirst 4 lines\nof narrative"] --> ASM
+    ASM["Assemble"] --> CAP["Cap at\n1500 chars"]
+    CAP --> INJ["Inject into\nsystem prompt\n(ephemeral)"]
+```
 
-### Hermes hooks
+Scalar fields only — never dumps raw YAML into the prompt. The result is ephemeral: appended for one turn, never persisted to session history.
 
-| Hook | When | What Happens |
-|------|------|-------------|
-| `on_session_start` | Session begins | Index all packs, load archetype config |
-| `pre_llm_call` | Before every LLM call | Detect activation, inject persona (≤1500 chars, ephemeral) |
-| `post_llm_call` | After every response | Observe mode transition signals |
-| `on_session_end` | Session ends | Cleanup, log transitions |
+### Hook lifecycle
 
-Context injection is ephemeral — appended to the system prompt for one turn, never persisted to session history.
+```mermaid
+sequenceDiagram
+    participant S as Session
+    participant P as Loa Plugin
+    participant H as Hermes LLM
+
+    S->>P: on_session_start
+    P->>P: Index 28 packs, load archetype
+
+    loop Every Turn
+        S->>P: pre_llm_call (user message)
+        P->>P: Detect mode / construct
+        P->>H: Inject persona context
+        H->>P: post_llm_call (response)
+        P->>P: Observe transition signals
+    end
+
+    S->>P: on_session_end
+    P->>P: Cleanup, log session path
+```
 
 ## Extending
 
