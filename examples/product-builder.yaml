@@ -1,0 +1,23 @@
+# Product Builder — three-mode archetype
+#
+# For product-focused teams who think in
+# build / learn / tell cycles.
+
+modes:
+  build:
+    constructs: [the-arcade, artisan]
+    persona: OSTROM
+    vocab: [implement, build, code, sprint, feature, fix, ship]
+
+  learn:
+    constructs: [observer, k-hole]
+    persona: KEEPER
+    vocab: [research, feedback, users, observe, interview, measure, signal]
+
+  tell:
+    constructs: [herald, gtm-collective, social-oracle]
+    persona: LILY
+    vocab: [announce, launch, narrative, market, community, changelog, blog]
+
+active_constructs: [the-arcade, observer, herald]
+entry_point: /build

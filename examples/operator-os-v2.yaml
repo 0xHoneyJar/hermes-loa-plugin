@@ -1,0 +1,39 @@
+# Operator OS v2 — Six cognitive modes
+#
+# This is ONE way to compose constructs into modes.
+# It maps to the Operator OS v2 system prompt style.
+# Copy to ~/.loa/loa-plugin.yaml and customize.
+
+modes:
+  feel:
+    constructs: [artisan]
+    persona: ALEXANDER
+    vocab: [pixel, motion, weight, material, feel, sensory, texture, spring, animation, warmth]
+
+  arch:
+    constructs: [the-arcade]
+    persona: OSTROM
+    vocab: [schema, blast radius, structural, ECS, architecture, migration, contract, compose]
+
+  dig:
+    constructs: [k-hole]
+    persona: STAMETS
+    vocab: [research, explore, deep dive, investigate, landscape]
+
+  ship:
+    constructs: [the-arcade]
+    persona: BARTH
+    vocab: [deploy, deadline, ship it, launch, release, go live]
+
+  frame:
+    constructs: [gtm-collective]
+    persona: LILY
+    vocab: [market, positioning, GTM, narrative, pricing, stakeholder]
+
+  tend:
+    constructs: [observer]
+    persona: KEEPER
+    vocab: [maintenance, sweep, audit, patrol, drift, staleness, cleanup]
+
+active_constructs: [observer, artisan, k-hole, the-arcade, gtm-collective]
+entry_point: /observe

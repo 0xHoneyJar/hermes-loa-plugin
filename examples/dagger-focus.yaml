@@ -1,0 +1,11 @@
+# Dagger — single-focus archetype
+#
+# For builders who go deep on one thing at a time.
+# No mode switching. One construct loaded, max depth.
+# "load kansei" or "load k-hole" activates directly.
+#
+# This archetype has NO modes defined — all activation
+# happens through direct construct references.
+
+active_constructs: [artisan, kansei]
+entry_point: /build
